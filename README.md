@@ -59,7 +59,7 @@ I am a computer science student interested in **algorithms, computational comple
 
 An introduction to Fenwick trees, partial-order problems, and segment trees, including key ideas, derivations, and reusable C++ templates.
 
-[Read the article](https://sanxi317.github.io/something/1.html) · [View the Markdown source](something/1.md)
+[Read the article](https://sanxi317.github.io/something/1.html) · [View the Markdown source](https://github.com/sanxi317/sanxi317.github.io/blob/main/something/1.md)
 
 ## Connect
 
