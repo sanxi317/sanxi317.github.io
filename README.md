@@ -41,14 +41,11 @@ I am a computer science student interested in **algorithms, computational comple
   <img src="https://img.shields.io/badge/ROS-22314E?style=flat-square&logo=ros&logoColor=white" alt="ROS">
   <img src="https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black" alt="Linux">
   <img src="https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white" alt="Git">
-  <img src="https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white" alt="HTML5">
-  <img src="https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white" alt="CSS3">
-  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black" alt="JavaScript">
 </p>
 
 ## Currently Working On
 
-- Studying computational complexity, parameterized algorithms, and graph algorithms;
+- Studying computational complexity, parameterized algorithms;
 - Exploring scheduling problems and exact solution methods;
 - Organizing course notes and problem-solving exercises;
 - Connecting theory with practice through machine learning, ROS, and robotics projects.
