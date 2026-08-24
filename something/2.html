@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>背包问题多项式近似算法 | sanxi317</title>
+<title>背包问题多项式近似算法 | 三析</title>
 <meta name="generator" content="Jekyll v3.10.0" />
 <meta property="og:title" content="背包问题多项式近似算法" />
 <meta property="og:locale" content="en_US" />
 <link rel="canonical" href="https://sanxi317.github.io/something/2.html" />
 <meta property="og:url" content="https://sanxi317.github.io/something/2.html" />
-<meta property="og:site_name" content="sanxi317" />
+<meta property="og:site_name" content="三析" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="背包问题多项式近似算法" />
@@ -44,14 +44,8 @@
 
     <style>
       .markdown-body { max-width: 960px; margin: 0 auto; }
-      .language-text .highlight {
-        border-left: 4px solid #a44f58;
-        background: #f6f8fa;
-      }
-      .language-text pre { line-height: 1.75; }
       @media (max-width: 640px) {
         .markdown-body { padding: 0 4px; }
-        .language-text pre { font-size: 12px; }
       }
     </style>
 
@@ -59,7 +53,7 @@
   <body>
     <div class="container-lg px-3 my-5 markdown-body">
 
-      <h1><a href="https://sanxi317.github.io/">sanxi317</a></h1>
+      <h1><a href="https://sanxi317.github.io/">三析</a></h1>
 
 
       <h1 id="背包问题多项式近似算法">背包问题多项式近似算法</h1>
@@ -153,22 +147,124 @@ $A[i+1,p]=min{A[i,p],size(a_{1+i})+A[i,p-profit(a_{i+1})]}$</p>
 </blockquote>
 
 <h2 id="近似算法">近似算法</h2>
-<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Algorithm 1  Profit-Scaling FPTAS for the 0–1 Knapsack Problem
+<style>
+.paper-algorithm {
+  margin: 1.5rem 0;
+  padding: 0.2rem 0 0.35rem;
+  border-top: 1.5px solid #222;
+  border-bottom: 1.5px solid #222;
+  color: #111;
+  font-family: "Latin Modern Roman", "Times New Roman", "Noto Serif SC", serif;
+  font-size: 15px;
+  line-height: 1.35;
+}
+.paper-algorithm .algorithm-caption {
+  padding: 0.12rem 0.2rem 0.18rem;
+  border-bottom: 1px solid #555;
+}
+.paper-algorithm .algorithm-caption strong,
+.paper-algorithm .algorithm-io strong,
+.paper-algorithm .keyword {
+  font-weight: 700;
+}
+.paper-algorithm .algorithm-name,
+.paper-algorithm .procedure {
+  font-variant: small-caps;
+  letter-spacing: 0.035em;
+}
+.paper-algorithm .algorithm-io {
+  padding: 0 0.2rem;
+}
+.paper-algorithm .algorithm-lines {
+  width: 100%;
+  margin: 0.2rem 0 0;
+  border: 0;
+  border-collapse: collapse;
+  background: transparent;
+  table-layout: auto;
+}
+.paper-algorithm .algorithm-lines td {
+  padding: 0 0.2rem;
+  border: 0;
+  background: transparent;
+  vertical-align: top;
+}
+.paper-algorithm .algorithm-lines tr {
+  border: 0;
+  background: transparent !important;
+}
+.paper-algorithm .line-number {
+  width: 2.2rem;
+  padding-right: 0.45rem !important;
+  text-align: right;
+  white-space: nowrap;
+}
+.paper-algorithm .indent-1 {
+  padding-left: 1.4rem !important;
+}
+.paper-algorithm .comment {
+  float: right;
+  margin-left: 1.2rem;
+  color: #444;
+  white-space: nowrap;
+}
+@media (max-width: 680px) {
+  .paper-algorithm {
+    overflow-x: auto;
+    font-size: 13px;
+  }
+  .paper-algorithm .algorithm-lines {
+    min-width: 640px;
+  }
+}
+</style>
 
-Input : Item set A = {a₁, a₂, …, aₙ}; sizes wᵢ = size(aᵢ);
-        profits pᵢ = profit(aᵢ); capacity B; accuracy ε ∈ (0, 1).
-Output: A feasible subset S′ ⊆ A satisfying
-        profit(S′) ≥ (1 − ε) · OPT.
-
- 1: P ← max₁≤ᵢ≤ₙ pᵢ
- 2: K ← εP / n                              ▷ profit-scaling factor
- 3: for i ← 1 to n do
- 4:     p̂ᵢ ← ⌊pᵢ / K⌋                       ▷ scaled profit of aᵢ
- 5: end for
- 6: S′ ← ExactProfitDP(A, B, (p̂₁, p̂₂, …, p̂ₙ))
-                                               ▷ solve the scaled instance exactly
- 7: return S′
-</code></pre></div></div>
+<div class="paper-algorithm" role="group" aria-labelledby="algorithm-1-caption">
+  <div class="algorithm-caption" id="algorithm-1-caption">
+    <strong>Algorithm 1</strong>
+    <span class="algorithm-name">Profit-Scaling FPTAS(A, B, ε)</span>
+  </div>
+  <div class="algorithm-io">
+    <strong>Require:</strong>
+    Item set A = {a₁, a₂, …, aₙ}, sizes wᵢ = size(aᵢ), profits pᵢ = profit(aᵢ), capacity B, and accuracy ε ∈ (0, 1)
+  </div>
+  <div class="algorithm-io">
+    <strong>Ensure:</strong>
+    A feasible subset S′ ⊆ A satisfying profit(S′) ≥ (1 − ε) · OPT
+  </div>
+  <table class="algorithm-lines" aria-label="Profit-scaling FPTAS pseudocode">
+    <tbody>
+      <tr>
+        <td class="line-number">1:</td>
+        <td>P ← max<sub>1≤i≤n</sub> p<sub>i</sub></td>
+      </tr>
+      <tr>
+        <td class="line-number">2:</td>
+        <td>K ← εP / n <span class="comment">▷ profit-scaling factor</span></td>
+      </tr>
+      <tr>
+        <td class="line-number">3:</td>
+        <td><span class="keyword">for</span> i ← 1 <span class="keyword">to</span> n <span class="keyword">do</span></td>
+      </tr>
+      <tr>
+        <td class="line-number">4:</td>
+        <td class="indent-1">p̂<sub>i</sub> ← ⌊p<sub>i</sub> / K⌋ <span class="comment">▷ scaled profit of a<sub>i</sub></span></td>
+      </tr>
+      <tr>
+        <td class="line-number">5:</td>
+        <td><span class="keyword">end for</span></td>
+      </tr>
+      <tr>
+        <td class="line-number">6:</td>
+        <td>S′ ← <span class="procedure">ExactProfitDP</span>(A, B, (p̂₁, p̂₂, …, p̂ₙ)) <span class="comment">▷ solve the scaled instance exactly</span></td>
+      </tr>
+      <tr>
+        <td class="line-number">7:</td>
+        <td><span class="keyword">return</span> S′</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 <p>其中，<code class="language-plaintext highlighter-rouge">ExactProfitDP</code> 表示上一节给出的、以利润为状态维度的精确动态规划算法。</p>
 
