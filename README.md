@@ -52,6 +52,12 @@ I am a computer science student interested in **algorithms, computational comple
 
 ## Featured Writing
 
+### [Polynomial Approximation for the Knapsack Problem](https://sanxi317.github.io/something/2.html)
+
+Study notes on pseudo-polynomial dynamic programming, profit scaling, approximation guarantees, PTAS, and FPTAS for the 0–1 knapsack problem.
+
+[Read the article](https://sanxi317.github.io/something/2.html) · [View the Markdown source](https://github.com/sanxi317/sanxi317.github.io/blob/main/something/2.md)
+
 ### [Advanced Data Structures — Part I](https://sanxi317.github.io/something/1.html)
 
 An introduction to Fenwick trees, partial-order problems, and segment trees, including key ideas, derivations, and reusable C++ templates.
@@ -75,9 +81,11 @@ This is a fully static website with no frameworks, build tools, database, or bac
 ├── assets/
 │   └── avatar.jpg     # Shared profile image
 └── something/
-    ├── index.html     # Interactive personal homepage
-    ├── 1.md           # Markdown source for the blog post
-    └── 1.html         # Exported blog page
+    ├── index.html     # Blog homepage
+    ├── 1.md           # Data structures article source
+    ├── 1.html         # Exported data structures article
+    ├── 2.md           # Approximation algorithms article source
+    └── 2.html         # Exported approximation algorithms article
 ```
 
 To preview the site locally, run the following command from the repository root:

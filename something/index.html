@@ -181,6 +181,10 @@
       transform: translateY(-2px);
     }
 
+    .post + .post {
+      margin-top: 16px;
+    }
+
     .post-meta {
       display: flex;
       flex-wrap: wrap;
@@ -400,8 +404,25 @@
       <section id="writing" aria-labelledby="writing-title">
         <div class="section-heading">
           <h2 id="writing-title">Latest writing</h2>
-          <span>01 article</span>
+          <span>02 articles</span>
         </div>
+
+        <article class="post">
+          <div class="post-meta">
+            <span><time datetime="2026-08-24">August 24, 2026</time></span>
+            <span>Approximation Algorithms</span>
+            <span>Study notes</span>
+          </div>
+
+          <h3 lang="zh-CN"><a href="2.html">背包问题多项式近似算法</a></h3>
+          <p class="post-description">From pseudo-polynomial dynamic programming to profit scaling: an introduction to the knapsack FPTAS and its approximation guarantee.</p>
+
+          <ul class="tags" aria-label="Article topics">
+            <li>FPTAS</li>
+            <li>Knapsack</li>
+            <li>Approximation</li>
+          </ul>
+        </article>
 
         <article class="post">
           <div class="post-meta">

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>背包问题多项式近似算法 | sanxi317</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="背包问题多项式近似算法" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="https://sanxi317.github.io/something/2.html" />
+<meta property="og:url" content="https://sanxi317.github.io/something/2.html" />
+<meta property="og:site_name" content="sanxi317" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="背包问题多项式近似算法" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","headline":"背包问题多项式近似算法","url":"https://sanxi317.github.io/something/2.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/pages/sanxi317/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [["$", "$"], ["\\(", "\\)"]],
+          displayMath: [["$$", "$$"], ["\\[", "\\]"]]
+        }
+      };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+      .markdown-body { max-width: 960px; margin: 0 auto; }
+      .language-text .highlight {
+        border-left: 4px solid #a44f58;
+        background: #f6f8fa;
+      }
+      .language-text pre { line-height: 1.75; }
+      @media (max-width: 640px) {
+        .markdown-body { padding: 0 4px; }
+        .language-text pre { font-size: 12px; }
+      }
+    </style>
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+
+      <h1><a href="https://sanxi317.github.io/">sanxi317</a></h1>
+
+
+      <h1 id="背包问题多项式近似算法">背包问题多项式近似算法</h1>
+<h2 id="背包问题">背包问题</h2>
+<p><em>Problem</em>：给定 n 个物品：$a_1,a_2,…,a_n$，他们的大小为 $size(a_i)$，利润为 $profit(a_i)\in N^{+}$，而背包的容量为 $B\in N^{+}$，选择大小最多为 $B$ 的物品，使得利润最大。</p>
+
+<p>由于背包问题是一个 NP 难问题，所以我们不期望有一个高效的多项式精确算法能够解决该问题。</p>
+<blockquote>
+  <p>在这个问题之前，我们老师还介绍了编码与 NP 问题的一些关系</p>
+</blockquote>
+
+<h2 id="编码二进制与一进制">编码：二进制与一进制</h2>
+<p><em>Definition 1</em>：
+二进制 $|I|$：一个问题 $I$ 的输入大小（由二进制编码表示）；
+一进制 $|I|_u$：一个问题 $I$ 的输入大小（由一进制编码表示）。</p>
+<blockquote>
+  <p>Interpretation：一进制就是用 1 做计数。For example: 5=11111; 3=111</p>
+</blockquote>
+
+<p><em>Definition 2</em>：
+一个问题的多项式算法在 $|I|$（二进制编码）下的运行时间是多项式；
+一个问题的伪多项式算法在 $|I|_u$（一进制编码）下的运行时间是多项式。</p>
+
+<p><em>Definition 3</em>：
+如果一个优化问题在 $|I|_u$（一进制编码下）是一个 $NP-hard$ 问题，那么它是一个 $strongly\;NP-hard$ 问题；
+如果一个优化问题在 $|I|$（二进制编码）下是一个 $NP-hard$ 问题但是有一个伪多项式算法，那么它是一个 $weakly\;NP-hard$ 问题。</p>
+
+<p><em>Theorem</em>：
+除非 $NP=P$，否则 $strongly\;NP-hard$ 问题没有伪多项式算法。</p>
+
+<p>证明（反证法）：
+若 $strongly\;NP-hard$ 问题 $\Pi$ 有伪多项式算法，则 $\Pi$ 在 $|I|_u$（一进制编码）下运行的时间为多项式，又因为 $\Pi$ 在 $|I|_u$ 下为 $NP-hard$ 问题，所以在 $|I|_u$ 下，$\Pi$ 有多项式时间算法，即有 $NP=P$（矛盾）。</p>
+
+<h2 id="背包问题的精确伪多项式算法">背包问题的精确伪多项式算法</h2>
+<blockquote>
+  <p>与流行的背包问题解法不同，该精确算法使用利润做动态规划</p>
+</blockquote>
+
+<p>令 $P=max{profit(a_i)}$，则 $P\leq OPT \leq nP$
+又令 $S_{i,p}$ 为当利润精准等于 $p$ 时，在 ${a_1,a_2,\dots,a_i}$ 中选出的最小大小（<del>容量，重量？说大小奇奇怪怪的</del>）的集合（该集合可能并不存在），$A[i,p]$ 为该集合的总大小。（如果 $S_{i,p}$ 不存在，则 $A[i,p]=\infty$）</p>
+
+<p><em>初始化</em>：
+对 $\forall p \in [1,nP]$，$A[1,p]$ 可以被计算；令 $A[1,p]=\infty, \;\forall p&lt;0$。</p>
+
+<p><em>动态方程</em>：
+$A[i+1,p]=min{A[i,p],size(a_{1+i})+A[i,p-profit(a_{i+1})]}$</p>
+
+<p><em>最终结果</em>：
+如果 $A[i,p]$ 全部计算出来，则 $OPT=max{p;A[n,p]\leq B}$</p>
+
+<p><em>时间复杂度</em>：$O(n^2P)$
+<em>代码</em>（用<a href="https://www.luogu.com.cn/problem/P1048">采药</a>一题验证对否，并输出了其集合）：</p>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span><span class="cpf">&lt;bits/stdc++.h&gt;</span><span class="cp">
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">N</span><span class="o">=</span><span class="mi">101</span><span class="p">,</span><span class="n">M</span><span class="o">=</span><span class="mi">10000</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">n</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="n">size</span><span class="p">[</span><span class="n">N</span><span class="p">],</span><span class="n">profit</span><span class="p">[</span><span class="n">N</span><span class="p">],</span><span class="n">A</span><span class="p">[</span><span class="n">N</span><span class="p">][</span><span class="n">M</span><span class="p">],</span><span class="n">sum_p</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+	<span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">B</span><span class="o">&gt;&gt;</span><span class="n">n</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">size</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">&gt;&gt;</span><span class="n">profit</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">sum_p</span><span class="o">+=</span><span class="n">profit</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+	<span class="n">memset</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="mh">0x3f</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">A</span><span class="p">));</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">profit</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="n">j</span><span class="o">++</span><span class="p">)</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+		<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="n">profit</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="n">j</span><span class="o">&lt;=</span><span class="n">sum_p</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">)</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">min</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">],</span><span class="n">size</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="n">profit</span><span class="p">[</span><span class="n">i</span><span class="p">]]);</span>
+	<span class="p">}</span>
+	<span class="kt">int</span> <span class="n">mx</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">sum_p</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="k">if</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">B</span><span class="p">)</span><span class="n">mx</span><span class="o">=</span><span class="n">i</span><span class="p">;</span>
+	<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">mx</span><span class="o">&lt;&lt;</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+
+	<span class="c1">// === 回溯求选中的物品集合 ===</span>
+	<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">chosen</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="n">mx</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">&gt;=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">--</span><span class="p">){</span>
+		<span class="c1">// 物品 i 被选中的条件</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">j</span><span class="o">&gt;=</span><span class="n">profit</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">==</span><span class="n">size</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="n">profit</span><span class="p">[</span><span class="n">i</span><span class="p">]]){</span>
+			<span class="n">chosen</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+			<span class="n">j</span><span class="o">-=</span><span class="n">profit</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+		<span class="p">}</span>
+		<span class="c1">// 否则 i 没选,j 不变</span>
+	<span class="p">}</span>
+	<span class="n">reverse</span><span class="p">(</span><span class="n">chosen</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="n">chosen</span><span class="p">.</span><span class="n">end</span><span class="p">());</span> <span class="c1">// 改成编号从小到大</span>
+
+	<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">"选中物品编号:"</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="o">:</span><span class="n">chosen</span><span class="p">)</span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">" "</span><span class="o">&lt;&lt;</span><span class="n">x</span><span class="p">;</span>
+	<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<blockquote>
+  <p>该代码的时间复杂度其实是 $O(n\cdot sum_profit)$，用 $nP$ 做时间复杂度有太多不必要的计算。上面讲的 $O(n^2P)$ 的时间复杂度是联系下文 qwq。</p>
+</blockquote>
+
+<h2 id="近似算法">近似算法</h2>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Algorithm 1  Profit-Scaling FPTAS for the 0–1 Knapsack Problem
+
+Input : Item set A = {a₁, a₂, …, aₙ}; sizes wᵢ = size(aᵢ);
+        profits pᵢ = profit(aᵢ); capacity B; accuracy ε ∈ (0, 1).
+Output: A feasible subset S′ ⊆ A satisfying
+        profit(S′) ≥ (1 − ε) · OPT.
+
+ 1: P ← max₁≤ᵢ≤ₙ pᵢ
+ 2: K ← εP / n                              ▷ profit-scaling factor
+ 3: for i ← 1 to n do
+ 4:     p̂ᵢ ← ⌊pᵢ / K⌋                       ▷ scaled profit of aᵢ
+ 5: end for
+ 6: S′ ← ExactProfitDP(A, B, (p̂₁, p̂₂, …, p̂ₙ))
+                                               ▷ solve the scaled instance exactly
+ 7: return S′
+</code></pre></div></div>
+
+<p>其中，<code class="language-plaintext highlighter-rouge">ExactProfitDP</code> 表示上一节给出的、以利润为状态维度的精确动态规划算法。</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span><span class="cpf">&lt;bits/stdc++.h&gt;</span><span class="cp">
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">N</span><span class="o">=</span><span class="mi">101</span><span class="p">,</span><span class="n">M</span><span class="o">=</span><span class="mi">100000</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">n</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="n">size</span><span class="p">[</span><span class="n">N</span><span class="p">],</span><span class="n">profit</span><span class="p">[</span><span class="n">N</span><span class="p">],</span><span class="n">orig_profit</span><span class="p">[</span><span class="n">N</span><span class="p">],</span><span class="n">A</span><span class="p">[</span><span class="n">N</span><span class="p">][</span><span class="n">M</span><span class="p">],</span><span class="n">sum_p</span><span class="p">,</span><span class="n">P</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="kt">double</span> <span class="n">K</span><span class="p">,</span><span class="n">eps</span><span class="o">=</span><span class="mf">0.1</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+	<span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">B</span><span class="o">&gt;&gt;</span><span class="n">n</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">size</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">&gt;&gt;</span><span class="n">profit</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+		<span class="n">orig_profit</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">profit</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>   <span class="c1">// 保存原始利润</span>
+		<span class="n">P</span><span class="o">=</span><span class="n">max</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">profit</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+	<span class="p">}</span>
+	<span class="n">K</span><span class="o">=</span><span class="n">eps</span><span class="o">*</span><span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="n">P</span><span class="o">/</span><span class="n">n</span><span class="p">;</span> <span class="c1">//放缩因子</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="n">profit</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,(</span><span class="kt">int</span><span class="p">)((</span><span class="kt">double</span><span class="p">)</span><span class="n">profit</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">K</span><span class="p">)),</span><span class="n">sum_p</span><span class="o">+=</span><span class="n">profit</span><span class="p">[</span><span class="n">i</span><span class="p">];</span> <span class="c1">//max避免 0 利润的取舍,会略微偏离上面的界</span>
+	<span class="n">memset</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="mh">0x3f</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">A</span><span class="p">));</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">profit</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="n">j</span><span class="o">++</span><span class="p">)</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+		<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="n">profit</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="n">j</span><span class="o">&lt;=</span><span class="n">sum_p</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">)</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">min</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">],</span><span class="n">size</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="n">profit</span><span class="p">[</span><span class="n">i</span><span class="p">]]);</span>
+	<span class="p">}</span>
+	<span class="kt">int</span> <span class="n">mx_profit</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">sum_p</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="k">if</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">B</span><span class="p">)</span><span class="n">mx_profit</span><span class="o">=</span><span class="n">i</span><span class="p">;</span>
+	<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">mx_profit</span><span class="o">&lt;&lt;</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+
+	<span class="c1">// === 回溯求选中的物品集合 ===</span>
+	<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">chosen</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="n">mx_profit</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">&gt;=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">--</span><span class="p">){</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">j</span><span class="o">&gt;=</span><span class="n">profit</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">==</span><span class="n">size</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="n">profit</span><span class="p">[</span><span class="n">i</span><span class="p">]]){</span>
+			<span class="n">chosen</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+			<span class="n">j</span><span class="o">-=</span><span class="n">profit</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="n">reverse</span><span class="p">(</span><span class="n">chosen</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="n">chosen</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+
+	<span class="kt">int</span> <span class="n">real_profit</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">total_size</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+	<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">"选中物品编号:"</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="o">:</span><span class="n">chosen</span><span class="p">){</span>
+		<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">" "</span><span class="o">&lt;&lt;</span><span class="n">x</span><span class="p">;</span>
+		<span class="n">real_profit</span><span class="o">+=</span><span class="n">orig_profit</span><span class="p">[</span><span class="n">x</span><span class="p">];</span>   <span class="c1">// 用原始利润求真实价值</span>
+		<span class="n">total_size</span><span class="o">+=</span><span class="n">size</span><span class="p">[</span><span class="n">x</span><span class="p">];</span>
+	<span class="p">}</span>
+	<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">"</span><span class="se">\n</span><span class="s">真实总利润: "</span><span class="o">&lt;&lt;</span><span class="n">real_profit</span><span class="o">&lt;&lt;</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+	<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">"占用容量: "</span><span class="o">&lt;&lt;</span><span class="n">total_size</span><span class="o">&lt;&lt;</span><span class="s">" / "</span><span class="o">&lt;&lt;</span><span class="n">B</span><span class="o">&lt;&lt;</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><em>Lemma</em>：
+\(profit(S')\geq (1-\epsilon)\times OPT\)
+<em>Proof</em>：
+令 $S_{OPT}={o_1,o_2,\dots,o_k}$。</p>
+
+<p><em>obs 1</em>：
+\(\because \forall i\in {1,2,\dots,k},profit(o_i)-K\leq K\cdot profit'(o_i)\leq profit(o_i)\\
+\therefore K\cdot \sum_{i\in S_{OPT}}{profit'(o_i)}\geq OPT-kK\geq OPT-nK\geq OPT-\epsilon P\)
+<em>obs 2</em>：</p>
+
+<p>\(\because profit(S')\geq K\cdot profit'(S')\geq K\cdot \sum_{i\in S_{OPT}}{profit'(o_i)}\\
+\therefore profit(S')\geq OPT-\epsilon \cdot P\geq OPT-\epsilon\cdot OPT=(1-\epsilon)\cdot OPT\)
+<em>Theorem</em>：
+该近似算法的时间复杂度为 $O(n^3/\epsilon)=O(n^2\cdot P/K)$。</p>
+
+<h2 id="近似方案approximation-scheme">近似方案（approximation scheme）</h2>
+<p><em>Definition</em>：
+令 $\Pi$ 为一个优化问题，若算法 $\mathcal{A}$ 满足如下条件，则称其为多项式时间近似方案（PTAS：polynomial-time approximation scheme）：
+对任意输入 $(I,\epsilon)$，算法 $\mathcal{A}$ 输出一个可行解 $s\in S_{\Pi}(I)$，且满足：</p>
+<ul>
+  <li>$\Pi$ 为极小化问题，目标函数值 $obj_{\Pi}(I,\epsilon)\leq (1+\epsilon)\cdot OPT$</li>
+  <li>$\Pi$ 为极大化问题，目标函数值 $obj_{\Pi}(I,\epsilon)\geq (1-\epsilon)\cdot OPT$</li>
+</ul>
+
+<p>对于任意固定的 $\epsilon$，算法 $\mathcal{A}$ 为多项式。
+特殊地，若算法 $\mathcal{A}$ 关于输入规模 $I$ 与精度倒数 $\epsilon$ 呈多项式关系，则称该算法为完全多项式时间近似方案（FPTAS：fully polynomial-time approximation scheme）。</p>
+
+<blockquote>
+  <p>For example:</p>
+  <ul>
+    <li>$O(n^{\frac{1}{\epsilon}}) \leadsto $ PTAS</li>
+    <li>$O(2^{\frac{1}{\epsilon}}n^2) \leadsto$ PTAS</li>
+    <li>$O(\frac{n^3}{\epsilon^{2}}) \leadsto$ FPTAS</li>
+  </ul>
+</blockquote>
+
+<p><em>Theorem</em>：
+设 $p$ 为多项式，$\Pi$ 为 $NP-hard$ 极小化优化问题；且对于 $\Pi$ 的任意实例 $I$，最优化目标值满足 $OPT(I)&lt; p(|I|_u)$：
+若问题 $\Pi$ 存在完全多项式时间近似方案（FPTAS），则该问题存在伪多项式精确算法。</p>
+
+<p><em>Proof</em>：
+设该 FPTAS 的运行时间为 $q(|I|,1/\epsilon)$（q 为二元多项式），其中令误差为 $\epsilon =\frac{1}{p(|I|_u)}$，$ALG$ 为该算法的结果。
+\(ALG \leq (1+\epsilon)\cdot OPT \\ ALG\leq OPT+\epsilon \cdot OPT \\ ALG &lt; OPT+\epsilon \cdot p(|I|_u)\\ ALG &lt; OPT+1 \\ \because ALG\geq OPT \\ \therefore ALG=OPT\)
+对于时间复杂度：将 $1/\epsilon=p(|I|_u)$ 带入 $q$ 为 $q(|I|,p(|I|_u))$，即为伪多项式。</p>
+<blockquote>
+  <p>Interpretation：
+这里的 $OPT(I)&lt; p(|I|_u)$ 也许有点难以理解，可以拿背包问题举个例子，它的最优解是不是就是最大的利润，但它的最大利润是不会超过所有物品加起来的利润的。</p>
+</blockquote>
+
+
+
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
